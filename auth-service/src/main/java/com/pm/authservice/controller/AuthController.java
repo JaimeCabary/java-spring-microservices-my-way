@@ -2,6 +2,10 @@ package com.pm.authservice.controller;
 
 import com.pm.authservice.dto.LoginRequestDTO;
 import com.pm.authservice.dto.LoginResponseDTO;
+import com.pm.authservice.dto.RegisterRequestDTO;
+import com.pm.authservice.model.User;
+import com.pm.authservice.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.pm.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
@@ -18,9 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final AuthService authService;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-  public AuthController(AuthService authService) {
+  public AuthController(AuthService authService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.authService = authService;
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
+  @Operation(summary = "Register a new user")
+  @PostMapping("/register")
+  public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+    if (userRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+    }
+    User user = new User();
+    user.setEmail(registerRequestDTO.getEmail());
+    user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+    user.setRole("USER");
+    userRepository.save(user);
+    return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
   }
 
   @Operation(summary = "Generate token on user login")
@@ -39,7 +60,7 @@ public class AuthController {
   }
 
   @Operation(summary = "Validate Token")
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = "*")
   @GetMapping("/validate")
   public ResponseEntity<Void> validateToken(
       @RequestHeader("Authorization") String authHeader) {

@@ -1,3 +1,8 @@
+  public PatientResponseDTO getPatientByEmail(String email) {
+    return patientRepository.findByEmail(email)
+      .map(PatientMapper::toDTO)
+      .orElse(null);
+  }
 package com.pm.patientservice.service;
 
 import com.pm.patientservice.dto.PatientRequestDTO;

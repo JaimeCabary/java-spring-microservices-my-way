@@ -1,3 +1,35 @@
+import org.springframework.web.bind.annotation.RequestHeader;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+  @GetMapping("/me")
+  @Operation(summary = "Get current user's patient record")
+  public ResponseEntity<PatientResponseDTO> getMyPatient(@RequestHeader("Authorization") String authHeader) {
+    // Extract JWT token
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      return ResponseEntity.status(401).build();
+    }
+    String token = authHeader.substring(7);
+    String secret = System.getenv("JWT_SECRET");
+    if (secret == null) {
+      // fallback to hardcoded or config value if needed
+      secret = "fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==";
+    }
+    String email;
+    try {
+      Claims claims = Jwts.parser()
+        .setSigningKey(secret.getBytes())
+        .parseClaimsJws(token)
+        .getBody();
+      email = claims.getSubject();
+    } catch (Exception e) {
+      return ResponseEntity.status(401).build();
+    }
+    PatientResponseDTO patient = patientService.getPatientByEmail(email);
+    if (patient == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(patient);
+  }
 package com.pm.patientservice.controller;
 
 import com.pm.patientservice.dto.PatientRequestDTO;
