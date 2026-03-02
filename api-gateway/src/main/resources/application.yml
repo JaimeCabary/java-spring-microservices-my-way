@@ -72,5 +72,4 @@ auth:
 
 jwt:
   # Ensure this matches the long secret in your Auth service exactly
-  secret: fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==
   secret: ${JWT_SECRET:fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==}
