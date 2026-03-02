@@ -4,13 +4,13 @@ WORKDIR /app
 
 COPY pom.xml .
 
-RUN mvn dependency:go-offline -B
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline -B
 
 COPY src ./src
 
-RUN mvn clean package
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
 
-FROM openjdk:21-jdk AS runner
+FROM eclipse-temurin:21-jdk AS runner
 
 WORKDIR /app
 

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,7 @@ public class AuthController {
   }
 
   @Operation(summary = "Validate Token")
+  @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping("/validate")
   public ResponseEntity<Void> validateToken(
       @RequestHeader("Authorization") String authHeader) {
@@ -51,4 +53,5 @@ public class AuthController {
         ? ResponseEntity.ok().build()
         : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
+  
 }

@@ -1,37 +1,123 @@
+#server:
+#  port: 4004 # Gateway listens on port 4004
+#
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: auth-service-route
+#          uri: http://localhost:4005
+#          predicates:
+#            - Path=/auth/**
+#          filters:
+#            - StripPrefix=1
+#
+#        # Changed from http://patient-service:4000 to localhost so IntelliJ can find it
+#        - id: patient-service-route
+#          uri: http://localhost:4000
+#          predicates:
+#            - Path=/api/patients/**
+#          filters:
+#            - StripPrefix=1
+#            - JwtValidation
+#
+#        - id: api-docs-patient-route
+#          uri: http://localhost:4000
+#          predicates:
+#            - Path=/api-docs/patients
+#          filters:
+#            - RewritePath=/api-docs/patients,/v3/api-docs
+#
+#        - id: api-docs-auth-route
+#          uri: http://localhost:4005
+#          predicates:
+#            - Path=/api-docs/auth
+#          filters:
+#            - RewritePath=/api-docs/auth,/v3/api-docs
+#            # Lone dash removed from here
+#
+#auth:
+#  service:
+#    url: http://localhost:4005
+#
+#jwt:
+#  # Ensure this matches the long secret in your Auth service exactly
+#  secret: fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==
+
+
 server:
   port: 4004 # Gateway listens on port 4004
 
 spring:
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:3001"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 3600
       routes:
         - id: auth-service-route
-          uri: http://auth-service:4005
+          uri: ${AUTH_SERVICE_URL:http://localhost:4005}
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
 
-        # Route for /api/patients/** to patient-service
         - id: patient-service-route
-          uri: http://patient-service:4000
+          uri: ${PATIENT_SERVICE_URL:http://localhost:4000}
           predicates:
             - Path=/api/patients/**
           filters:
             - StripPrefix=1
             - JwtValidation
 
-        # Route for /api/docs/patients to patient-service /v3/api-docs
         - id: api-docs-patient-route
-          uri: http://patient-service:4000
+          uri: ${PATIENT_SERVICE_URL:http://localhost:4000}
           predicates:
             - Path=/api-docs/patients
           filters:
             - RewritePath=/api-docs/patients,/v3/api-docs
 
         - id: api-docs-auth-route
-          uri: http://auth-service:4005
+          uri: ${AUTH_SERVICE_URL:http://localhost:4005}
           predicates:
             - Path=/api-docs/auth
           filters:
             - RewritePath=/api-docs/auth,/v3/api-docs
+
+        - id: billing-service-route
+          uri: ${BILLING_SERVICE_URL:http://localhost:4001}
+          predicates:
+            - Path=/api/billing/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+        - id: analytics-service-route
+          uri: ${ANALYTICS_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://localhost:4005}
+
+jwt:
+  # Ensure this matches the long secret in your Auth service exactly
+  secret: fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==
