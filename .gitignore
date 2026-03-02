@@ -84,3 +84,8 @@ Thumbs.db
 
 # AWS credentials
 .aws/
+
+.next/
+build/
+dist/
+.env
