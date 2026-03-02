@@ -12,10 +12,10 @@ public class AnalyticsController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${PATIENT_SERVICE_URL:http://localhost:4000}")
+    @Value("${PATIENT_SERVICE_URL:http://patient-service:4000}")
     private String patientServiceUrl;
 
-    @Value("${BILLING_SERVICE_URL:http://localhost:4001}")
+    @Value("${BILLING_SERVICE_URL:http://billing-service:4001}")
     private String billingServiceUrl;
 
     @GetMapping
