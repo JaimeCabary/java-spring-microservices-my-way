@@ -32,16 +32,24 @@ public class AuthController {
   }
   @Operation(summary = "Register a new user")
   @PostMapping("/register")
-  public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+  public ResponseEntity<LoginResponseDTO> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
     if (userRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
     User user = new User();
     user.setEmail(registerRequestDTO.getEmail());
     user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
     user.setRole("USER");
     userRepository.save(user);
-    return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    // Authenticate immediately and return token like login
+    Optional<String> tokenOptional = authService.authenticate(
+      new LoginRequestDTO(registerRequestDTO.getEmail(), registerRequestDTO.getPassword())
+    );
+    if (tokenOptional.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+    String token = tokenOptional.get();
+    return ResponseEntity.status(HttpStatus.CREATED).body(new LoginResponseDTO(token));
   }
 
   @Operation(summary = "Generate token on user login")

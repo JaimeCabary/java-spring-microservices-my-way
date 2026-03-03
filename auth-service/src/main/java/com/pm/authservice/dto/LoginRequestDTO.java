@@ -13,6 +13,10 @@ public class LoginRequestDTO {
   @Size(min = 8, message = "Password must be at least 8 characters long")
   private String password;
 
+  public LoginRequestDTO(String email2, String password2) {
+    //TODO Auto-generated constructor stub
+}
+
   public @NotBlank(message = "Email is required") @Email(message = "Email should be a valid email address") String getEmail() {
     return email;
   }
