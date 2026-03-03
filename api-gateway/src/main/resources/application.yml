@@ -22,14 +22,14 @@ spring:
             maxAge: 3600
       routes:
         - id: auth-service-route
-          uri: ${AUTH_SERVICE_URL:http://localhost:4005}
+          uri: ${AUTH_SERVICE_URL:http://13.62.89.182:4005}
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
 
         - id: patient-service-route
-          uri: ${PATIENT_SERVICE_URL:http://localhost:4000}
+          uri: ${PATIENT_SERVICE_URL:http://13.62.89.182:4000}
           predicates:
             - Path=/api/patients/**
           filters:
@@ -37,21 +37,21 @@ spring:
             - JwtValidation
 
         - id: api-docs-patient-route
-          uri: ${PATIENT_SERVICE_URL:http://localhost:4000}
+          uri: ${PATIENT_SERVICE_URL:http://13.62.89.182:4000}
           predicates:
             - Path=/api-docs/patients
           filters:
             - RewritePath=/api-docs/patients,/v3/api-docs
 
         - id: api-docs-auth-route
-          uri: ${AUTH_SERVICE_URL:http://localhost:4005}
+          uri: ${AUTH_SERVICE_URL:http://13.62.89.182:4005}
           predicates:
             - Path=/api-docs/auth
           filters:
             - RewritePath=/api-docs/auth,/v3/api-docs
 
         - id: billing-service-route
-          uri: ${BILLING_SERVICE_URL:http://localhost:4001}
+          uri: ${BILLING_SERVICE_URL:http://13.62.89.182:4001}
           predicates:
             - Path=/api/billing/**
           filters:
@@ -59,7 +59,7 @@ spring:
             - JwtValidation
 
         - id: analytics-service-route
-          uri: ${ANALYTICS_SERVICE_URL:http://localhost:8082}
+          uri: ${ANALYTICS_SERVICE_URL:http://13.62.89.182:8082}
           predicates:
             - Path=/api/analytics/**
           filters:
@@ -68,8 +68,8 @@ spring:
 
 auth:
   service:
-    url: ${AUTH_SERVICE_URL:http://localhost:4005}
+    url: ${AUTH_SERVICE_URL:http://13.62.89.182:4005}
 
 jwt:
   # Ensure this matches the long secret in your Auth service exactly
-  secret: ${JWT_SECRET:fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==}
+  secret: fyfgPnukEBCqnVS0FC6qNrQs+6FVaKIFF9IY6woS0V5r7O7dXhOkmDoO6Lg1I3f6hVAH29q4xLb+DTsLzzesXg==
